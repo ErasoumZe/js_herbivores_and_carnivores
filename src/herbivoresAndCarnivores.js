@@ -3,10 +3,10 @@
 class Animal {
   static alive = [];
 
-  constructor(name, health = 100) {
-    this.name = name;
+  constructor(health = 100, name) {
     this.health = health;
-    Animal.alive.push(this);
+    this.name = name;
+    Animal.alive.push(this); // Adiciona o animal à lista de vivos
   }
 
   isAlive() {
@@ -14,10 +14,10 @@ class Animal {
   }
 
   die() {
-    const index = Animal.alive.findIndex((a) => a === this);
-
-    if (index !== -1) {
-      Animal.alive.splice(index, 1);
+    // Verifica se o animal está morto
+    if (this.health <= 0) {
+      // Atualiza a lista de animais vivos removendo o animal morto
+      Animal.alive = Animal.alive.filter((a) => a !== this);
     }
   }
 
@@ -25,31 +25,34 @@ class Animal {
     this.health += amount;
 
     if (this.health <= 0) {
-      this.health = 0; // Garantir que a saúde não seja negativa
-      this.die();
+      this.die(); // Chama o die para remover o animal da lista de vivos
     }
   }
 }
 
 class Herbivore extends Animal {
   constructor(name, health = 100) {
-    super(name, health);
-    this.hidden = false; // O herbívoro começa visível
+    super(health, name);
+    this.hidden = false; // Inicializa hidden como false
   }
 
   hide() {
-    this.hidden = !this.hidden; // Alterna o estado de 'escondido'
+    this.hidden = true; // Torna o herbívoro invisível
+  }
+
+  reveal() {
+    this.hidden = false; // Torna o herbívoro visível novamente
   }
 }
 
 class Carnivore extends Animal {
   constructor(name, health = 100) {
-    super(name, health);
+    super(health, name);
   }
 
   bite(animal) {
     if (animal instanceof Herbivore && !animal.hidden) {
-      animal.changeHealth(-50);
+      animal.changeHealth(-50); // Diminui a saúde do herbívoro
     }
   }
 }
